@@ -61,11 +61,6 @@ public class Parser {
             // push command
             case "push", "pop" -> {
                 if (pieces.length == 3) {
-                    try {
-                        Integer.parseInt(pieces[2]);
-                    } catch (Exception e) {
-                        throw new ParseException(lineNumber(), String.format("usage: %s <segment> <i> where <i> should be an integer.", pieces[0]));
-                    }
                     return pieces[0].equals("push") ? CommandType.C_PUSH : CommandType.C_POP;
                 }
             }
@@ -74,8 +69,33 @@ public class Parser {
         }
 
         throw new ParseException(lineNumber(), String.format("unrecgonized command: \"%s\"", command()));
+    }
 
+    /** Return the first argument */
+    public String arg1() throws ParseException {
+        if (this.commandType() == CommandType.C_ARITHMETIC) {
+            return this.command();
+        } else {
+            String[] pieces = this.command().split(" ");
+            return pieces[1];
+        }
+    }
 
+    /** Return the second argument; only should be called if the command is C_PUSH, C_POP, C_FUNCTION, C_CALL */
+    public int arg2() throws ParseException {
+        String argStr = this.command().split(" ")[2];
+        try {
+            int arg = Integer.parseInt(argStr);
+
+            // the argument cannot be negative
+            if (arg < 0) {
+                throw new Exception();
+            }
+
+            return arg;
+        } catch (Exception e) {
+            throw new ParseException(lineNumber(), String.format("the second argument of \"%s\" command should be an non-negative integer.", commandType()));
+        }
     }
 
     /** Return the current command */
