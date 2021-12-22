@@ -22,17 +22,38 @@ public class Parser {
         }
     }
 
-    private List<String> lines;
+    /** Represents a line */
+    private class Line {
+        int lineNumber;
+        String command;
+        public Line(int lineNumber, String command) {
+            this.lineNumber = lineNumber;
+            this.command = command;
+        }
+    }
+
+    private List<Line> lines;
     private int idx;
 
     public Parser(InputStream in) {
-        Scanner scanner = new Scanner(in);
-
         this.idx = -1;
+
         // read all lines to a list
+        Scanner scanner = new Scanner(in);
+        int lineCount = 1;
         this.lines = new ArrayList<>();
         while (scanner.hasNextLine()) {
-            lines.add(scanner.nextLine().strip());
+            String command = scanner.nextLine().strip();
+
+            // filter comments and white lines
+            if (!command.startsWith("//") && !command.equals("")) {
+                lines.add(new Line(
+                        lineCount,
+                        command
+                ));
+            }
+
+            lineCount += 1;
         }
     }
 
@@ -94,17 +115,17 @@ public class Parser {
 
             return arg;
         } catch (Exception e) {
-            throw new ParseException(lineNumber(), String.format("the second argument of \"%s\" command should be an non-negative integer.", commandType()));
+            throw new ParseException(lineNumber(), String.format("the second argument of \"%s\" command should be a non-negative integer.", commandType()));
         }
     }
 
     /** Return the current command */
     private String command() {
-        return this.lines.get(idx);
+        return this.lines.get(idx).command;
     }
 
     /** Return the current line number */
-    private int lineNumber() {
-        return idx;
+    public int lineNumber() {
+        return this.lines.get(idx).lineNumber;
     }
 }
