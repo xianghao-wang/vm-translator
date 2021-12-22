@@ -61,6 +61,11 @@ public class Parser {
             // push command
             case "push", "pop" -> {
                 if (pieces.length == 3) {
+                    try {
+                        Integer.parseInt(pieces[2]);
+                    } catch (Exception e) {
+                        throw new ParseException(lineNumber(), String.format("usage: %s <segment> <i> where <i> should be an integer.", pieces[0]));
+                    }
                     return pieces[0].equals("push") ? CommandType.C_PUSH : CommandType.C_POP;
                 }
             }

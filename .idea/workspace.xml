@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="c4fc369a-c9c1-46b3-9461-493f189ba0ae" name="Changes" comment="" />
+    <list default="true" id="c4fc369a-c9c1-46b3-9461-493f189ba0ae" name="Changes" comment="init and add Parser.java">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/vm/Parser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/vm/Parser.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -107,8 +110,16 @@
       <option name="presentableId" value="Default" />
       <updated>1640181945582</updated>
       <workItem from="1640181946674" duration="2530000" />
-      <workItem from="1640186118179" duration="10000" />
+      <workItem from="1640186118179" duration="321000" />
     </task>
+    <task id="LOCAL-00001" summary="init and add Parser.java">
+      <created>1640186214160</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1640186214160</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -129,5 +140,7 @@
     <ignored-roots>
       <path value="$PROJECT_DIR$" />
     </ignored-roots>
+    <MESSAGE value="init and add Parser.java" />
+    <option name="LAST_COMMIT_MESSAGE" value="init and add Parser.java" />
   </component>
 </project>
