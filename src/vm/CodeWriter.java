@@ -35,8 +35,10 @@ public class CodeWriter {
     };
 
     private BufferedWriter fout; // for writing command line by line
+    private int count;
 
     public CodeWriter(OutputStream out) {
+        this.count = 0;
         this.fout = new BufferedWriter(new OutputStreamWriter(out));
 
         // write base address of stack
@@ -53,6 +55,8 @@ public class CodeWriter {
         } catch (Exception e) {
             throw new CodeWriterException("Cannot write into the output file.", e);
         }
+
+        this.count += 1;
     }
 
     /** Write arithmetic VM command into assembly */
@@ -81,12 +85,38 @@ public class CodeWriter {
                 switch (command) {
                     case "add" -> writeCommand("M=D+M");
                     case "sub" -> writeCommand("M=M-D");
-                    // TODO eq, lt, gt
+
+                    // TODO fix bug
+                    case "eq", "lt", "gt" -> {
+                        int labelID = this.count;
+                        String trueLabel = "vm$assign.false:" + labelID;
+                        String falseLabel = "vm$assign.true:" + labelID;
+
+                        writeCommand("D=D-M");
+                        writeCommand("@" + trueLabel);
+                        writeCommand("D;" + switch (command) {
+                            case "eq" -> "JEQ";
+                            case "lt" -> "JLT";
+                            case "gt" -> "JGT";
+                            default -> "";
+                        });
+
+
+                        writeCommand("D=0");
+                        writeCommand("@" + falseLabel);
+                        writeCommand("0;JMP");
+                        writeCommand("(" + trueLabel + ")");
+                        writeCommand("D=1");
+                        writeCommand("(" + falseLabel + ")");
+                        writeCommand("@SP");
+                        writeCommand("A=M");
+                        writeCommand("M=D");
+                    }
                     case "and" -> writeCommand("M=D&M");
                     case "or" -> writeCommand("M=D|M");
                 }
 
-                // store the result
+                // increment SP
                 writeCommand("@SP");
                 writeCommand("M=M+1");
             }
