@@ -57,7 +57,6 @@ public class CodeWriter {
     private void writeCommand(String command) {
         try {
             fout.write(command + "\n");
-            fout.flush();
         } catch (Exception e) {
             throw new CodeWriterException(1, "cannot write into the output file.");
         }
@@ -99,6 +98,62 @@ public class CodeWriter {
                     case "and" -> writeCommand("M=D&M");
                     case "or" -> writeCommand("M=D|M");
                 }
+            }
+        }
+    }
+
+    /** Write push/pop command into assembly */
+    public void writePushPop(Parser.CommandType commandType, String segment, int index) {
+        switch (commandType) {
+            // push command
+            case C_PUSH -> {
+                // get segment i
+                switch (segment) {
+                    case "argument", "local", "this", "that" -> {
+                        writeCommand("@" + switch (segment) {
+                            case "argument" -> "ARG";
+                            case "local" -> "LCL";
+                            case "this" -> "THIS";
+                            case "that" -> "THAT";
+                        });
+                        writeCommand("D=M");
+                        writeCommand("@" + index);
+                        writeCommand("A=D+A");
+                        writeCommand("D=M");
+                    }
+
+                    case "static" -> {
+                        writeCommand("@static." + index);
+                        writeCommand("D=M");
+                    }
+
+                    case "constant" -> {
+                        writeCommand("@" + index);
+                        writeCommand("D=A");
+                    }
+
+                    case "temp" -> {
+                        writeCommand("@" + (VM_INIT.get("temp").begin + index));
+                        writeCommand("D=M");
+                    }
+
+                    case "pointer" -> {
+                        writeCommand("@" + (index == 0 ? "THIS" : "THAT"));
+                        writeCommand("D=M");
+                    }
+                }
+
+                // push data to stack
+                writeCommand("@SP");
+                writeCommand("A=M");
+                writeCommand("M=D");
+                writeCommand("@SP");
+                writeCommand("M=M+1");
+            }
+
+            // pop command
+            case C_POP -> {
+
             }
         }
     }
