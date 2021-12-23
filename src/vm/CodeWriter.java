@@ -76,22 +76,22 @@ public class CodeWriter {
             // unary operation
             case "neg", "not" -> {
                 writeCommand("@SP");
+                writeCommand("M=M-1");
                 writeCommand("A=M");
                 writeCommand("M=" + (command.equals("neg") ? "-M" : "!M"));
-                writeCommand("@SP");
-                writeCommand("M=M-1");
             }
 
             // binary operation
             default -> {
                 // get the second operator
                 writeCommand("@SP");
+                writeCommand("M=M-1");
                 writeCommand("A=M");
                 writeCommand("D=M");
+
+                // get the first calculator and do calculation
                 writeCommand("@SP");
                 writeCommand("M=M-1");
-
-                // calculation
                 writeCommand("A=M");
                 switch (command) {
                     case "add" -> writeCommand("M=D+M");
@@ -100,6 +100,10 @@ public class CodeWriter {
                     case "and" -> writeCommand("M=D&M");
                     case "or" -> writeCommand("M=D|M");
                 }
+
+                // store the result
+                writeCommand("@SP");
+                writeCommand("M=M+1");
             }
         }
     }
