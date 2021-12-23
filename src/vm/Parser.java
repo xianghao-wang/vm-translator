@@ -16,7 +16,7 @@ public class Parser {
     }
 
     /** Exception of parser processing */
-    public static class ParseException extends Exception {
+    public static class ParseException extends RuntimeException {
         public ParseException(int lineNumber, String msg) {
             super(String.format("Line %d: %s", lineNumber, msg));
         }
@@ -68,7 +68,7 @@ public class Parser {
     }
 
     /** Return the type of current command */
-    public CommandType commandType() throws ParseException {
+    public CommandType commandType() {
         String[] pieces = command().split(" ");
 
         switch (pieces[0]) {
@@ -93,7 +93,7 @@ public class Parser {
     }
 
     /** Return the first argument */
-    public String arg1() throws ParseException {
+    public String arg1() {
         if (this.commandType() == CommandType.C_ARITHMETIC) {
             return this.command();
         } else {
@@ -103,7 +103,7 @@ public class Parser {
     }
 
     /** Return the second argument; only should be called if the command is C_PUSH, C_POP, C_FUNCTION, C_CALL */
-    public int arg2() throws ParseException {
+    public int arg2() {
         String argStr = this.command().split(" ")[2];
         try {
             int arg = Integer.parseInt(argStr);
