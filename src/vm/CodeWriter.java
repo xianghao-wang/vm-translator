@@ -211,6 +211,11 @@ public class CodeWriter {
     }
 
     public void close() {
+        // infinite loop
+        writeCommand("(program.end)");
+        writeCommand("@program.end");
+        writeCommand("0;JMP");
+
         try {
             fout.flush();
             fout.close();
