@@ -39,12 +39,11 @@ public class CodeWriter {
     public CodeWriter(OutputStream out) {
         this.fout = new BufferedWriter(new OutputStreamWriter(out));
 
-        // write the init of vm
-        allocateValue("SP", VM_INIT.get("stack").begin);
-        allocateValue("LCL", VM_INIT.get("local").begin);
-        allocateValue("ARG", VM_INIT.get("argument").begin);
-        allocateValue("THIS", VM_INIT.get("this").begin);
-        allocateValue("THAT", VM_INIT.get("that").begin);
+        // write base address of stack
+        writeCommand("@" + VM_INIT.get("stack").begin);
+        writeCommand("D=A");
+        writeCommand("@SP");
+        writeCommand("M=D");
     }
 
     /** Write command of one line */
@@ -54,14 +53,6 @@ public class CodeWriter {
         } catch (Exception e) {
             throw new CodeWriterException("Cannot write into the output file.", e);
         }
-    }
-
-    /** Allocate value to a memory represented by the symbol */
-    private void allocateValue(String symbol, int value) {
-        writeCommand("@" + value);
-        writeCommand("D=A");
-        writeCommand("@" + symbol);
-        writeCommand("M=D");
     }
 
     /** Write arithmetic VM command into assembly */
