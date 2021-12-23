@@ -64,8 +64,10 @@ public class CodeWriter {
 
     /** Allocate value to a memory represented by the symbol */
     private void allocateValue(String symbol, int value) {
+        writeCommand("@" + value);
+        writeCommand("D=A");
         writeCommand("@" + symbol);
-        writeCommand("M=" + value);
+        writeCommand("M=D");
     }
 
     /** Write arithmetic VM command into assembly */
