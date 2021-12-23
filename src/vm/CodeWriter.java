@@ -201,8 +201,9 @@ public class CodeWriter {
                     }
                 }
 
-                // pop the data in stack to D register
+                // decrement SP and pop the data in stack to D register
                 writeCommand("@SP");
+                writeCommand("M=M-1");
                 writeCommand("A=M");
                 writeCommand("D=M");
 
