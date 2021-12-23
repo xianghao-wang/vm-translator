@@ -28,3 +28,6 @@ hs_err_pid*
 
 # vm files
 *.vm
+
+# asm files
+*.asm
