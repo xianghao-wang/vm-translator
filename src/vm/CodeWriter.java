@@ -30,7 +30,6 @@ public class CodeWriter {
             put("pointer", new Segment(3, 4));
             put("temp", new Segment(5, 12));
             put("general", new Segment(13, 15));
-            put("stack", new Segment(256, 2047)); // SP
         }
     };
 
@@ -40,12 +39,6 @@ public class CodeWriter {
     public CodeWriter(OutputStream out) {
         this.count = 0;
         this.fout = new BufferedWriter(new OutputStreamWriter(out));
-
-        // write base address of stack
-        writeCommand("@" + VM_INIT.get("stack").begin);
-        writeCommand("D=A");
-        writeCommand("@SP");
-        writeCommand("M=D");
     }
 
     /** Write command of one line */
@@ -68,6 +61,8 @@ public class CodeWriter {
                 writeCommand("M=M-1");
                 writeCommand("A=M");
                 writeCommand("M=" + (command.equals("neg") ? "-M" : "!M"));
+                writeCommand("@SP");
+                writeCommand("M=M+1");
             }
 
             // binary operation
@@ -78,7 +73,7 @@ public class CodeWriter {
                 writeCommand("A=M");
                 writeCommand("D=M");
 
-                // get the first calculator and do calculation
+                // get the first operator and do calculation
                 writeCommand("@SP");
                 writeCommand("M=M-1");
                 writeCommand("A=M");
@@ -86,13 +81,12 @@ public class CodeWriter {
                     case "add" -> writeCommand("M=D+M");
                     case "sub" -> writeCommand("M=M-D");
 
-                    // TODO fix bug
                     case "eq", "lt", "gt" -> {
                         int labelID = this.count;
-                        String trueLabel = "vm$assign.false:" + labelID;
-                        String falseLabel = "vm$assign.true:" + labelID;
+                        String trueLabel = "vm$assign.true:" + labelID;
+                        String falseLabel = "vm$assign.false:" + labelID;
 
-                        writeCommand("D=D-M");
+                        writeCommand("D=M-D");
                         writeCommand("@" + trueLabel);
                         writeCommand("D;" + switch (command) {
                             case "eq" -> "JEQ";
@@ -106,7 +100,7 @@ public class CodeWriter {
                         writeCommand("@" + falseLabel);
                         writeCommand("0;JMP");
                         writeCommand("(" + trueLabel + ")");
-                        writeCommand("D=1");
+                        writeCommand("D=-1");
                         writeCommand("(" + falseLabel + ")");
                         writeCommand("@SP");
                         writeCommand("A=M");
