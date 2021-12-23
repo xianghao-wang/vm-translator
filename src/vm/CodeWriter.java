@@ -153,7 +153,55 @@ public class CodeWriter {
 
             // pop command
             case C_POP -> {
+                int exchange_reg = VM_INIT.get("general").begin;
 
+                // store (segment + i) into exchange register
+                switch (segment) {
+                    case "argument", "local", "this", "that" -> {
+                        writeCommand("@" + switch (segment) {
+                            case "argument" -> "ARG";
+                            case "local" -> "LCL";
+                            case "this" -> "THIS";
+                            case "that" -> "THAT";
+                        });
+                        writeCommand("D=M");
+                        writeCommand("@" + index);
+                        writeCommand("D=D+A");
+                        writeCommand("@" + exchange_reg);
+                        writeCommand("M=D");
+                    }
+
+                    case "static" -> {
+                        writeCommand("@static." + index);
+                        writeCommand("D=A");
+                        writeCommand("@" + exchange_reg);
+                        writeCommand("M=D");
+                    }
+
+                    case "temp" -> {
+                        writeCommand("@" + (VM_INIT.get("temp").begin + index));
+                        writeCommand("D=A");
+                        writeCommand("@" + exchange_reg);
+                        writeCommand("M=D");
+                    }
+
+                    case "pointer" -> {
+                        writeCommand("@" + (index == 0 ? "THIS" : "THAT"));
+                        writeCommand("D=A");
+                        writeCommand("@" + exchange_reg);
+                        writeCommand("M=D");
+                    }
+                }
+
+                // pop the data in stack to D register
+                writeCommand("@SP");
+                writeCommand("A=M");
+                writeCommand("D=M");
+
+                // store data in D register into the memory of which address is stored in exchange register
+                writeCommand("@" + exchange_reg);
+                writeCommand("A=M");
+                writeCommand("M=D");
             }
         }
     }
