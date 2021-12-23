@@ -30,13 +30,7 @@ public class CodeWriter {
             put("pointer", new Segment(3, 4));
             put("temp", new Segment(5, 12));
             put("general", new Segment(13, 15));
-            put("static", new Segment(16, 255));
-            put("stack", new Segment(256, 2047));
-
-            put("local", new Segment(2048, 2303));
-            put("argument", new Segment(2304, 2559));
-            put("this", new Segment(2560, 2815));
-            put("that", new Segment(2816, 3070));
+            put("stack", new Segment(256, 2047)); // SP
         }
     };
 
