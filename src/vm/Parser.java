@@ -89,7 +89,7 @@ public class Parser {
             // TODO check the braching and function command type
         }
 
-        throw new ParseException(lineNumber(), String.format("unrecgonized command: \"%s\"", command()));
+        throw new ParseException(lineNumber(), String.format("unrecgonized command: \"%s\".", command()));
     }
 
     /** Return the first argument */
