@@ -9,8 +9,8 @@ import java.util.Map;
 public class CodeWriter {
     /** Exception of code writer processing */
     public static class CodeWriterException extends RuntimeException {
-        public CodeWriterException(int lineNumber, String msg) {
-            super(String.format("Line %d: %s", lineNumber, msg));
+        public CodeWriterException(String msg, Throwable e) {
+            super(msg, e);
         }
     }
 
@@ -43,7 +43,7 @@ public class CodeWriter {
     private BufferedWriter fout; // for writing command line by line
 
     public CodeWriter(OutputStream out) {
-        BufferedWriter fout = new BufferedWriter(new OutputStreamWriter(out));
+        this.fout = new BufferedWriter(new OutputStreamWriter(out));
 
         // write the init of vm
         allocateValue("SP", VM_INIT.get("stack").begin);
@@ -58,7 +58,7 @@ public class CodeWriter {
         try {
             fout.write(command + "\n");
         } catch (Exception e) {
-            throw new CodeWriterException(1, "cannot write into the output file.");
+            throw new CodeWriterException("Cannot write into the output file.", e);
         }
     }
 
@@ -115,6 +115,7 @@ public class CodeWriter {
                             case "local" -> "LCL";
                             case "this" -> "THIS";
                             case "that" -> "THAT";
+                            default -> "";
                         });
                         writeCommand("D=M");
                         writeCommand("@" + index);
@@ -163,6 +164,7 @@ public class CodeWriter {
                             case "local" -> "LCL";
                             case "this" -> "THIS";
                             case "that" -> "THAT";
+                            default -> "";
                         });
                         writeCommand("D=M");
                         writeCommand("@" + index);
@@ -203,6 +205,15 @@ public class CodeWriter {
                 writeCommand("A=M");
                 writeCommand("M=D");
             }
+        }
+    }
+
+    public void close() {
+        try {
+            fout.flush();
+            fout.close();
+        } catch (Exception e) {
+            throw new CodeWriterException("Cannot close the output file.", e);
         }
     }
 }
