@@ -157,6 +157,8 @@ public class CodeWriter {
                         writeCommand("@" + (index == 0 ? "THIS" : "THAT"));
                         writeCommand("D=M");
                     }
+
+                    default -> throw new CodeWriterException(String.format("Unrecognized segment \"%s\" of C_PUSH.", segment), null);
                 }
 
                 // push data to stack
@@ -208,6 +210,8 @@ public class CodeWriter {
                         writeCommand("@" + exchange_reg);
                         writeCommand("M=D");
                     }
+
+                    default -> throw new CodeWriterException(String.format("Unrecognized segment \"%s\" of C_POP.", segment), null);
                 }
 
                 // decrement SP and pop the data in stack to D register
