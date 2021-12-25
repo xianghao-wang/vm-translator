@@ -34,11 +34,16 @@ public class CodeWriter {
     };
 
     private BufferedWriter fout; // for writing command line by line
-    private int count;
+    private int labelCount;
 
     public CodeWriter(OutputStream out) {
-        this.count = 0;
+        this.labelCount = 0;
         this.fout = new BufferedWriter(new OutputStreamWriter(out));
+    }
+
+    /** Generate a label name */
+    private String createLabel(String name) {
+        return "vm." +  name + "$" + (labelCount ++);
     }
 
     /** Write command of one line */
@@ -48,8 +53,6 @@ public class CodeWriter {
         } catch (Exception e) {
             throw new CodeWriterException("Cannot write into the output file.", e);
         }
-
-        this.count += 1;
     }
 
     /** Write arithmetic VM command into assembly */
@@ -82,9 +85,8 @@ public class CodeWriter {
                     case "sub" -> writeCommand("M=M-D");
 
                     case "eq", "lt", "gt" -> {
-                        int labelID = this.count;
-                        String trueLabel = "vm$assign.true:" + labelID;
-                        String falseLabel = "vm$assign.false:" + labelID;
+                        String trueLabel = createLabel("assign.true");
+                        String falseLabel = createLabel("assign.false");
 
                         writeCommand("D=M-D");
                         writeCommand("@" + trueLabel);
