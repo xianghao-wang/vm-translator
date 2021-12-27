@@ -6,6 +6,7 @@ import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.Map;
 
+// TODO move debug error to Parser
 public class CodeWriter {
     /** Exception of code writer processing */
     public static class CodeWriterException extends RuntimeException {
